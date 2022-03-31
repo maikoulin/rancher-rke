@@ -1,0 +1,3 @@
+dingtalk:
+  image: hub.local:5000/rancher/timonwong-prometheus-webhook-dingtalk/prometheus-webhook-dingtalk-linux-arm64
+

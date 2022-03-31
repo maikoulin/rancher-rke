@@ -1,0 +1,6 @@
+{                                                                                                                                       
+        "registry-mirrors": ["https://docker.mirrors.ustc.edu.cn"],
+        "insecure-registries": ["hub.local:5000"],
+        "experimental": true
+}
+

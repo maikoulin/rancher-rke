@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-webhook-dingtalk
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: prometheus-webhook-dingtalk
+  annotations:
+    configmap.reloader.stakater.com/reload: "prometheus-webhook-dingtalk-config"
+
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: prometheus-webhook-dingtalk
+  minReadySeconds: 0
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: prometheus-webhook-dingtalk
+    spec:
+      containers:
+      - name: prometheus-webhook-dingtalk
+        image: {{ .Values.dingtalk.image }}
+#hub.local:5000/rancher/timonwong-prometheus-webhook-dingtalk/prometheus-webhook-dingtalk-linux-arm64
+
+        args:
+        - --config.file=/etc/prometheus-webhook-dingtalk/config.yml
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "100m"
+        readinessProbe:
+          tcpSocket:
+            port: 8060
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 8060
+          initialDelaySeconds: 60
+          periodSeconds: 10
+        ports:
+        - containerPort: 8060
+          protocol: TCP
+          name: http
+
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/prometheus-webhook-dingtalk/config.yml
+          subPath: config.yml
+
+      volumes:
+      - configMap:
+          name: prometheus-webhook-dingtalk-config
+        name: config-volume
+

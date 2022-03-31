@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-webhook-dingtalk-config
+  namespace: {{ .Release.Namespace }}
+data:
+  config.yml: |
+    targets:
+      webhook1:
+        url: https://oapi.dingtalk.com/robot/send?access_token=xxxxxxxxxxxx
+        secret: SEC000000000000000000000
